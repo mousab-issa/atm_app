@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AtmContext } from "../store/ATMContext";
+import { AtmContext } from "./ATMContext";
 
 export const PinInput: React.FC = () => {
   const { state } = useContext(AtmContext);

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AtmContext, AtmSteps } from "../store/ATMContext";
+import { AtmContext, AtmSteps } from "./ATMContext";
 import { BalanceScreen } from "./BalanceScreen";
 import { LoginScreen } from "./LoginScreen";
 import { MenuScreen } from "./MenuScreen";

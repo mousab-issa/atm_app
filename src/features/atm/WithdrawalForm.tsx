@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { AtmContext } from "../store/ATMContext";
+import { AtmContext } from "./ATMContext";
 import { ScreenContainer } from "./ScreenContainer";
 
 export const WithdrawalForm: React.FC = () => {

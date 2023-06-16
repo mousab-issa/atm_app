@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { atmService } from "../services/Atm.service";
-import { AtmContext } from "../store/ATMContext";
+import { atmService } from "./services/Atm.service";
+import { AtmContext } from "./ATMContext";
 
 export const useFetchBalance = () => {
   const { dispatch } = useContext(AtmContext);

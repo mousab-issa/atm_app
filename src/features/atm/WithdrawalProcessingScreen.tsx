@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AtmContext } from "../store/ATMContext";
+import { AtmContext } from "./ATMContext";
 
 import { ScreenContainer } from "./ScreenContainer";
 

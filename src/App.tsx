@@ -1,6 +1,7 @@
 import "./App.css";
-import ATMContainer from "./features/atm/components/AtmContainer";
-import { AtmProvider } from "./features/atm/store/ATMContext";
+import ATMContainer from "./features/atm/AtmContainer";
+
+import { AtmProvider } from "./features/atm/ATMContext";
 
 function App() {
   return (

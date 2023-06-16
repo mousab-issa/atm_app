@@ -1,5 +1,5 @@
 import React, { createContext, useReducer } from "react";
-import { calculateNotes } from "../utils/utils";
+import { calculateNotes } from "./utils/utils";
 
 export enum AtmSteps {
   EnterPin = "ENTER_PIN",

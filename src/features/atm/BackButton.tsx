@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { AtmContext, AtmSteps } from "../store/ATMContext";
+import { AtmContext, AtmSteps } from "./ATMContext";
 
 export const BackButton: React.FC = () => {
   const { dispatch } = useContext(AtmContext);
