@@ -1,31 +1,72 @@
 import React, { createContext, Dispatch, useReducer } from "react";
+import { calculateNotes } from "./utils";
+
+export enum AtmSteps {
+  EnterPin = "ENTER_PIN",
+  Menu = "MENU",
+  Withdraw = "WITHDRAW",
+  CheckBalance = "CHECK_BALANCE",
+  WithdrawProcessing = "WITHDRAW_PROCESSING",
+  SuccessScreen = "SUCCESS_SCREEN",
+}
 
 export const initialState: AtmState = {
-  step: 0,
+  step: AtmSteps.EnterPin,
   pin: "",
   amount: 0,
   balance: 0,
   error: null,
+  notes: {
+    five: 4,
+    ten: 15,
+    twenty: 7,
+  },
 };
 
 export const atmReducer = (state: AtmState, action: AtmAction): AtmState => {
   switch (action.type) {
     case "ENTER_PIN":
-      return { ...state, pin: action.pin, step: 1 };
+      return { ...state, pin: action.pin };
+
     case "SELECT_OPTION":
       return { ...state, step: action.option };
+
     case "ENTER_AMOUNT":
-      return { ...state, amount: action.amount, step: 3 };
-    case "RESET":
-      return initialState;
+      const { remaining, newNotes, distributedNotes } = calculateNotes(
+        action.amount,
+        state.notes
+      );
+
+      if (remaining > 0) {
+        return {
+          ...state,
+          error: `Unable to withdraw amount. Remaining: £${remaining}`,
+        };
+      } else {
+        return {
+          ...state,
+          amount: action.amount,
+          notes: newNotes,
+          step: AtmSteps.WithdrawProcessing,
+          withdrawalNotes: distributedNotes,
+        };
+      }
+
     case "FETCH_BALANCE_SUCCESS":
-      return { ...state, balance: action.balance };
+      return { ...state, balance: action.balance, step: AtmSteps.Menu };
     case "FETCH_BALANCE_ERROR":
       return { ...state, error: action.error };
+
     case "WITHDRAW_CASH_SUCCESS":
       return { ...state, balance: state.balance - action.balance };
     case "WITHDRAW_CASH_ERROR":
       return { ...state, error: action.error };
+
+    case "UPDATE_NOTES":
+      return { ...state, notes: action.notes };
+
+    case "RESET":
+      return initialState;
     default:
       return state;
   }

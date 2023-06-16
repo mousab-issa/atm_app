@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import { API_ENDPOINTS } from "../../config/config";
 
@@ -11,9 +11,14 @@ const instance = axios.create({
 export const atmService = {
   getBalance: async (pin: string) => {
     try {
-      const response = await instance.post("/pin");
-      return response.data;
-    } catch (e) {}
+      const response: AxiosResponse<{
+        currentBalance: number;
+      }> = await instance.post("/pin", { pin });
+
+      return response.data.currentBalance;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   },
   withdraw: async (amount: number) => {
     const response = await instance.post("");

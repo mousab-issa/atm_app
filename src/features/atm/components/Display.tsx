@@ -1,9 +1,21 @@
-import React, { useContext, useState } from "react";
-import { AtmContext } from "../ATMContext";
-import { useFetchBalance } from "../hooks";
-import { useAtmStepper } from "../useAtmStepper";
+import React, { Fragment, useContext, useState } from "react";
+import { AtmContext, AtmSteps } from "../ATMContext";
 
-const PinInput: React.FC<{ onSubmit: (pin: string) => void }> = (props) => {
+const BackButton: React.FC = () => {
+  const { dispatch } = useContext(AtmContext);
+
+  const handleBack = () => {
+    dispatch({ type: "SELECT_OPTION", option: AtmSteps.Menu });
+  };
+
+  return (
+    <button onClick={handleBack} className="back-button">
+      Back
+    </button>
+  );
+};
+
+const PinInput: React.FC = () => {
   const { state } = useContext(AtmContext);
 
   return (
@@ -14,7 +26,7 @@ const PinInput: React.FC<{ onSubmit: (pin: string) => void }> = (props) => {
       <input
         value={state.pin}
         id="pin"
-        className="w-full px-3 py-2 text-center text-black"
+        className="w-full px-3 py-2 text-center text-black  rounded-lg"
         readOnly
       />
     </div>
@@ -23,13 +35,15 @@ const PinInput: React.FC<{ onSubmit: (pin: string) => void }> = (props) => {
 
 const WithdrawalForm: React.FC = () => {
   const [amount, setAmount] = useState("");
+  const { dispatch } = useContext(AtmContext);
 
   const handleWithdraw = (e: any) => {
     e.preventDefault();
+    dispatch({ type: "ENTER_AMOUNT", amount: parseInt(amount) });
   };
 
   return (
-    <form onSubmit={handleWithdraw}>
+    <Fragment>
       <label htmlFor="amount" className="block text-center mb-2">
         Withdrawal amount:
       </label>
@@ -40,41 +54,60 @@ const WithdrawalForm: React.FC = () => {
         onChange={(e) => setAmount(e.target.value)}
         className="w-full px-3 py-2 text-center text-black mb-3"
       />
+
       <button
+        onClick={handleWithdraw}
         className="w-full bg-green-500 hover:bg-green-600 px-3 py-2 text-center text-white"
-        type="submit"
       >
         Withdraw
       </button>
-    </form>
+    </Fragment>
   );
 };
-const WithdrawalProcessingScreen: React.FC<{ amount: number }> = ({
-  amount,
-}) => {
+
+const WithdrawalProcessingScreen: React.FC = () => {
+  const { state } = useContext(AtmContext);
+  const { withdrawalNotes } = state;
+
   return (
     <ScreenContainer>
-      <p className="text-xl">Withdrawing £{amount}...</p>
+      <p className="text-xl">Withdrawing £{state.amount}</p>
       <p>Please take your cash from the slot.</p>
+      {withdrawalNotes && (
+        <p>
+          Notes: £20 x {withdrawalNotes.twenty}, £10 x {withdrawalNotes.ten}, £5
+          x {withdrawalNotes.five}
+        </p>
+      )}
     </ScreenContainer>
   );
 };
 
-type MenuScreenProps = {
-  onSelectOption: (option: number) => void;
-};
+const MenuScreen: React.FC = () => {
+  const { dispatch } = useContext(AtmContext);
 
-const MenuScreen: React.FC<MenuScreenProps> = ({ onSelectOption }) => {
   return (
     <ScreenContainer>
       <p className="text-xl">Options:</p>
       <div className="flex justify-between">
         <ul className="list-inside">
-          <li onClick={() => onSelectOption(1)}>View Balance</li>
-          <li onClick={() => onSelectOption(2)}>Withdraw Cash</li>
+          <li
+            onClick={() =>
+              dispatch({ type: "SELECT_OPTION", option: AtmSteps.CheckBalance })
+            }
+          >
+            View Balance
+          </li>
+          <li
+            onClick={() =>
+              dispatch({ type: "SELECT_OPTION", option: AtmSteps.Withdraw })
+            }
+          >
+            Withdraw Cash
+          </li>
         </ul>
         <ul className="list-decimal list-inside">
-          <li onClick={() => onSelectOption(4)}>Quit</li>
+          <li>Quit</li>
         </ul>
       </div>
     </ScreenContainer>
@@ -82,16 +115,9 @@ const MenuScreen: React.FC<MenuScreenProps> = ({ onSelectOption }) => {
 };
 
 const LoginScreen: React.FC = () => {
-  const { state } = useContext(AtmContext);
-  const fetchBalance = useFetchBalance();
-
-  const handlePinSubmit = (pin: string) => {
-    fetchBalance(pin);
-  };
-
   return (
     <ScreenContainer>
-      <PinInput onSubmit={handlePinSubmit} />
+      <PinInput />
     </ScreenContainer>
   );
 };
@@ -104,6 +130,7 @@ const ScreenContainer: React.FC<ScreenContainerProps> = ({ children }) => {
   return (
     <div className="text-center mb-5">
       <h1 className="text-2xl font-bold text-gray-300">WELCOME TO ATM BANK</h1>
+      <BackButton />
       {children}
     </div>
   );
@@ -121,28 +148,31 @@ const SuccessScreen: React.FC = () => {
   );
 };
 
+const BalanceScreen: React.FC = () => {
+  const { state } = useContext(AtmContext);
+
+  return (
+    <ScreenContainer>
+      <p className="text-xl">Your current balance is £{state.balance}</p>
+    </ScreenContainer>
+  );
+};
+
 const Display: React.FC = () => {
-  const { step, goToStep } = useAtmStepper(0);
+  const {
+    state: { step },
+  } = useContext(AtmContext);
 
-  const handleSelectOption = (option: number) => {
-    if (option === 2) {
-      goToStep(2);
-    }
-  };
-
-  const handleSelectAmount = (amount: number) => {
-    if (amount === 0) {
-      goToStep(3);
-    }
-  };
+  console.log(step);
 
   return (
     <div className="flex flex-col justify-center items-center text-white">
-      {step === 0 && <LoginScreen />}
-      {step === 1 && <MenuScreen onSelectOption={handleSelectOption} />}
-      {step === 2 && <WithdrawalProcessingScreen amount={50} />}
-      {step === 3 && <WithdrawalForm />}
-      {step === 4 && <SuccessScreen />}
+      {step === AtmSteps.EnterPin && <LoginScreen />}
+      {step === AtmSteps.Menu && <MenuScreen />}
+      {step === AtmSteps.WithdrawProcessing && <WithdrawalProcessingScreen />}
+      {step === AtmSteps.CheckBalance && <BalanceScreen />}
+      {step === AtmSteps.Withdraw && <WithdrawalForm />}
+      {step === AtmSteps.SuccessScreen && <SuccessScreen />}
     </div>
   );
 };

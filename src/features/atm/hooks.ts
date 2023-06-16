@@ -8,6 +8,10 @@ export const useFetchBalance = () => {
   const fetchBalance = async (pin: string) => {
     try {
       const balance = await atmService.getBalance(pin);
+      if (!balance) {
+        return;
+      }
+
       dispatch({ type: "FETCH_BALANCE_SUCCESS", balance });
     } catch (error: any) {
       dispatch({ type: "FETCH_BALANCE_ERROR", error: error.message });
