@@ -35,7 +35,10 @@ const PinInput: React.FC = () => {
 
 const WithdrawalForm: React.FC = () => {
   const [amount, setAmount] = useState("");
-  const { dispatch } = useContext(AtmContext);
+  const {
+    dispatch,
+    state: { error },
+  } = useContext(AtmContext);
 
   const handleWithdraw = (e: any) => {
     e.preventDefault();
@@ -88,28 +91,26 @@ const MenuScreen: React.FC = () => {
 
   return (
     <ScreenContainer>
-      <p className="text-xl">Options:</p>
-      <div className="flex justify-between">
-        <ul className="list-inside">
-          <li
-            onClick={() =>
-              dispatch({ type: "SELECT_OPTION", option: AtmSteps.CheckBalance })
-            }
-          >
-            View Balance
-          </li>
-          <li
-            onClick={() =>
-              dispatch({ type: "SELECT_OPTION", option: AtmSteps.Withdraw })
-            }
-          >
-            Withdraw Cash
-          </li>
-        </ul>
-        <ul className="list-decimal list-inside">
-          <li>Quit</li>
-        </ul>
+      <p className="text-xl">Please select an option:</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <button
+          onClick={() =>
+            dispatch({ type: "SELECT_OPTION", option: AtmSteps.CheckBalance })
+          }
+          className="w-full bg-blue-500 hover:bg-blue-600 px-3 py-2 text-center text-white rounded-md"
+        >
+          View Balance
+        </button>
+        <button
+          onClick={() =>
+            dispatch({ type: "SELECT_OPTION", option: AtmSteps.Withdraw })
+          }
+          className="w-full bg-blue-500 hover:bg-blue-600 px-3 py-2 text-center text-white rounded-md"
+        >
+          Withdraw Cash
+        </button>
       </div>
+      <BackButton />
     </ScreenContainer>
   );
 };
@@ -127,11 +128,19 @@ type ScreenContainerProps = {
 };
 
 const ScreenContainer: React.FC<ScreenContainerProps> = ({ children }) => {
+  const {
+    state: { step, error },
+  } = useContext(AtmContext);
+
+  console.log(error);
+
   return (
     <div className="text-center mb-5">
       <h1 className="text-2xl font-bold text-gray-300">WELCOME TO ATM BANK</h1>
-      <BackButton />
+      {step !== AtmSteps.EnterPin && step !== AtmSteps.Menu && <BackButton />}
       {children}
+
+      <span>{error && error}</span>
     </div>
   );
 };
@@ -162,8 +171,6 @@ const Display: React.FC = () => {
   const {
     state: { step },
   } = useContext(AtmContext);
-
-  console.log(step);
 
   return (
     <div className="flex flex-col justify-center items-center text-white">
