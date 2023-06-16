@@ -9,10 +9,14 @@ const instance = axios.create({
 });
 
 export const atmService = {
-  getBalance: async () => {
+  getBalance: async (pin: string) => {
     try {
-      const response = await instance.get("");
+      const response = await instance.post("/pin");
+      return response.data;
     } catch (e) {}
   },
-  withdraw: async () => {},
+  withdraw: async (amount: number) => {
+    const response = await instance.post("");
+    return response.data;
+  },
 };

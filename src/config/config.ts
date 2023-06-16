@@ -1,3 +1,3 @@
 export const API_ENDPOINTS = {
-  base: "",
+  base: "https://frontend-challenge.screencloud-michael.vercel.app/api",
 };
