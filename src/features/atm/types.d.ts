@@ -1,3 +1,8 @@
+type AtmContextProps = {
+  state: AtmState;
+  dispatch: Dispatch<AtmAction>;
+};
+
 type AtmState = {
   step: AtmSteps;
   pin: string;

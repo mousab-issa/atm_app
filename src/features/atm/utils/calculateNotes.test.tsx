@@ -4,7 +4,9 @@ describe("calculateNotes", () => {
   it("should calculate correct amount of notes for multiple of five", () => {
     const notes = { five: 10, ten: 10, twenty: 10 };
     const amount = 75;
+
     const result = calculateNotes(amount, notes);
+
     expect(result).toEqual({
       remaining: 0,
       newNotes: {

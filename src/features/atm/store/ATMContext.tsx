@@ -1,5 +1,5 @@
-import React, { createContext, Dispatch, useReducer } from "react";
-import { calculateNotes } from "./utils";
+import React, { createContext, useReducer } from "react";
+import { calculateNotes } from "../utils/utils";
 
 export enum AtmSteps {
   EnterPin = "ENTER_PIN",
@@ -70,11 +70,6 @@ export const atmReducer = (state: AtmState, action: AtmAction): AtmState => {
     default:
       return state;
   }
-};
-
-type AtmContextProps = {
-  state: AtmState;
-  dispatch: Dispatch<AtmAction>;
 };
 
 export const AtmContext = createContext<AtmContextProps>({

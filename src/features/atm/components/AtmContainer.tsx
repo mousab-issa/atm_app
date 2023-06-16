@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { AtmContext } from "./ATMContext";
-import AtmButton from "./components/AtmButton";
-import Display from "./components/Display";
-import { useFetchBalance } from "./hooks";
+import { AtmContext } from "../store/ATMContext";
+import AtmButton from "./AtmButton";
+import Display from "./Display";
+import { useFetchBalance } from "../hooks/hooks";
 
 const numbers = Array.from({ length: 9 }).map((_, i) => `${i + 1}`);
 
