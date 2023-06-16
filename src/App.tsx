@@ -1,12 +1,14 @@
-import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import ATMContainer from "./features/atm/AtmContainer";
 
+import { AtmProvider } from "./features/atm/ATMContext";
+
 function App() {
   return (
-    <div className="App">
-      <ATMContainer />
+    <div>
+      <AtmProvider>
+        <ATMContainer />
+      </AtmProvider>
     </div>
   );
 }

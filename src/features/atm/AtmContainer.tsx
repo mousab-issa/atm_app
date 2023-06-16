@@ -1,16 +1,42 @@
-import React from "react";
-import PinInput from "./components/PinInput";
-import BalanceDisplay from "./components/BalanceDisplay";
-import WithdrawalForm from "./components/WithdrawalForm";
+import React, { useContext } from "react";
+import { AtmContext } from "./ATMContext";
+import AtmButton from "./AtmButton";
+import Display from "./Display";
+import { useFetchBalance } from "./hooks";
+
+const numbers = Array.from({ length: 9 }).map((_, i) => `${i + 1}`);
 
 const ATMContainer: React.FC = () => {
+  const fetchBalance = useFetchBalance();
+  const { dispatch, state } = useContext(AtmContext);
+
+  const handleAddPin = (number: string) => {
+    dispatch({ type: "ENTER_PIN", pin: state.pin + number });
+  };
+
+  const handleSubmitPin = () => {
+    fetchBalance(state.pin);
+    dispatch({ type: "ENTER_PIN", pin: "" });
+  };
+
   return (
-    <div className="flex flex-col justify-center items-center bg-gray-800 h-screen text-white">
-      <h1 className="text-3xl mb-5">ATM Machine</h1>
-      <div className="border border-gray-600 bg-gray-700 p-8 rounded-xl w-96">
-        <BalanceDisplay />
-        <PinInput />
-        <WithdrawalForm />
+    <div className="flex flex-col justify-center items-center bg-gray-900 min-h-screen text-white w-full">
+      <div className="w-full max-w-md h-auto bg-gray-600 rounded-lg shadow-2xl flex flex-col items-center p-6 gap-6 transform perspective-150 rotate-y-5 mx-4 md:mx-0">
+        <div className="bg-blue-500 w-full rounded-lg flex items-center justify-center h-56 md:h-64 relative overflow-hidden shadow-inner">
+          <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-r from-green-400 to-blue-500 animate-pulse" />
+          <Display />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 w-full md:w-2/3 mb-4 px-4">
+          {numbers.map((number, i) => (
+            <AtmButton
+              key={i + 1}
+              value={number}
+              onClick={() => handleAddPin(number)}
+            />
+          ))}
+          <AtmButton value="Enter" onClick={handleSubmitPin} />
+        </div>
       </div>
     </div>
   );
