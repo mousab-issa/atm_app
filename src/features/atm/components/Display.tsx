@@ -1,44 +1,12 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AtmContext, AtmSteps } from "../store/ATMContext";
-
-const BackButton: React.FC = () => {
-  const { dispatch } = useContext(AtmContext);
-
-  const handleBack = () => {
-    dispatch({ type: "SELECT_OPTION", option: AtmSteps.Menu });
-  };
-
-  return (
-    <button onClick={handleBack} className="back-button">
-      Back
-    </button>
-  );
-};
-
-const PinInput: React.FC = () => {
-  const { state } = useContext(AtmContext);
-
-  return (
-    <div className="mb-5">
-      <label htmlFor="pin" className="block text-center mb-2">
-        Enter PIN:
-      </label>
-      <input
-        value={state.pin}
-        id="pin"
-        className="w-full px-3 py-2 text-center text-black  rounded-lg"
-        readOnly
-      />
-    </div>
-  );
-};
+import { BackButton } from "./BackButton";
+import { PinInput } from "./PinInput";
+import { ScreenContainer } from "./ScreenContainer";
 
 const WithdrawalForm: React.FC = () => {
   const [amount, setAmount] = useState("");
-  const {
-    dispatch,
-    state: { error },
-  } = useContext(AtmContext);
+  const { dispatch } = useContext(AtmContext);
 
   const handleWithdraw = (e: any) => {
     e.preventDefault();
@@ -46,7 +14,7 @@ const WithdrawalForm: React.FC = () => {
   };
 
   return (
-    <Fragment>
+    <ScreenContainer>
       <label htmlFor="amount" className="block text-center mb-2">
         Withdrawal amount:
       </label>
@@ -64,7 +32,7 @@ const WithdrawalForm: React.FC = () => {
       >
         Withdraw
       </button>
-    </Fragment>
+    </ScreenContainer>
   );
 };
 
@@ -120,28 +88,6 @@ const LoginScreen: React.FC = () => {
     <ScreenContainer>
       <PinInput />
     </ScreenContainer>
-  );
-};
-
-type ScreenContainerProps = {
-  children: React.ReactNode;
-};
-
-const ScreenContainer: React.FC<ScreenContainerProps> = ({ children }) => {
-  const {
-    state: { step, error },
-  } = useContext(AtmContext);
-
-  console.log(error);
-
-  return (
-    <div className="text-center mb-5">
-      <h1 className="text-2xl font-bold text-gray-300">WELCOME TO ATM BANK</h1>
-      {step !== AtmSteps.EnterPin && step !== AtmSteps.Menu && <BackButton />}
-      {children}
-
-      <span>{error && error}</span>
-    </div>
   );
 };
 
